@@ -1,0 +1,8 @@
+name: Jobs
+author: Ninoo
+version: 1.0
+api-version: 1.17
+main: net.fruchtlabor.fruchtjobs.Jobs
+depend: [Vault]
+commands:
+  jobs:

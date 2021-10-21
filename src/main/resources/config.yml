@@ -1,0 +1,16 @@
+MySQL:
+  name: "minecraft"
+  user: "minecraft"
+  password: "MC12?!897_he47!"
+  port: 3307
+Permissions:
+  noBossBar: "Jobs.nobossbar"
+Messages:
+  levelup: "§f[Jobs] §6Du bist jetzt §2{job} §6level: §2{level} §6!"
+  jobjoin: "§f[Jobs] §6Du besitzt jetzt den Job: §2{job}"
+  jobleave: "§f[Jobs] §6Du besitzt jetzt den Job: §2{job} §6nichtmehr!"
+Worlds:
+  # allowed: where certain stuff like worldguard could be ignored
+  allowed:
+    - "world"
+    - "Farmwelt"
