@@ -1,8 +1,9 @@
 MySQL:
+  host: "localhost"
   name: "minecraft"
   user: "minecraft"
   password: "MC12?!897_he47!"
-  port: 3307
+  port: 3306
 Permissions:
   noBossBar: "Jobs.nobossbar"
 Messages:

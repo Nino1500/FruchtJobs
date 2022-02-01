@@ -4,16 +4,16 @@ import net.fruchtlabor.fruchtjobs.Jobs;
 import net.fruchtlabor.fruchtjobs.abstracts.Job;
 import net.fruchtlabor.fruchtjobs.codedItems.CodedItems;
 import net.fruchtlabor.fruchtjobs.jobRelated.JobPlayer;
+import net.fruchtlabor.fruchtjobs.logs.MaterialsEntityLog;
+import net.fruchtlabor.fruchtjobs.logs.MaterialsLog;
 import net.fruchtlabor.fruchtjobs.logs.SimpleLocation;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import java.sql.Timestamp;
-import java.time.Duration;
-import java.time.chrono.ChronoPeriod;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,14 +23,19 @@ public class DatabaseManager {
     Plugin plugin;
     private final ArrayList<JobPlayer> players;
     private final HashMap<String, ArrayList<SimpleLocation>> log;
+    private final HashMap<Job, ArrayList<MaterialsLog>> materialsMap;
+    private final HashMap<Job, ArrayList<MaterialsEntityLog>> materialsEntityMap;
 
     public DatabaseManager(Plugin plugin) {
         this.plugin = plugin;
         players = new ArrayList<>();
         log = new HashMap<>();
+        materialsMap = new HashMap<>();
+        materialsEntityMap = new HashMap<>();
         getAllPlayers();
         getLog();
         safePeriodic();
+        fillMatLog();
     }
 
     private void safePeriodic(){
@@ -40,6 +45,13 @@ public class DatabaseManager {
                 safeLog();
             }
         }, 0L, 1200L);
+    }
+
+    public void fillMatLog(){
+        for (Job job : Jobs.jobs){
+            materialsMap.put(job, getJobMaterials(job));
+            materialsEntityMap.put(job, getJobMonsters(job));
+        }
     }
 
     public boolean addPlayer(UUID uuid, String jobname, int lvl, double exp, int plvl){
@@ -153,6 +165,68 @@ public class DatabaseManager {
                 log.put(location.getWorld(), list1);
             }
         }
+    }
+
+    private ArrayList<MaterialsLog> getJobMaterials(Job job){
+        Database db = new Database(plugin);
+        return db.getMaterialLogByJob(job);
+    }
+
+    private ArrayList<MaterialsEntityLog> getJobMonsters(Job job){
+        Database db = new Database(plugin);
+        return db.getEntityLogByJob(job);
+    }
+
+    public void changeMaterialsLog(Material material, double exp){
+        Database db = new Database(plugin);
+        db.changeMaterialsLog(material, exp);
+    }
+
+    public void changeEntityLog(EntityType entityType, double exp){
+        Database db = new Database(plugin);
+        db.changeEntityLog(entityType, exp);
+    }
+
+    public boolean addMaterialsLog(MaterialsLog materialsLog){
+        Database db = new Database(plugin);
+        for (MaterialsLog mat : materialsLog.getJob().getItems()){
+            if (mat.getMaterial().equals(materialsLog.getMaterial()) && mat.getType().equals(materialsLog.getType())){
+                return false;
+            }
+        }
+        materialsLog.getJob().getItems().add(materialsLog);
+        db.insertMaterialsLog(materialsLog);
+        return true;
+    }
+
+    public boolean addMatEntityLog(MaterialsEntityLog materialsEntityLog){
+        Database db = new Database(plugin);
+        for (MaterialsEntityLog entityLog : materialsEntityLog.getJob().getMonster()){
+            if (entityLog.getEntityType().equals(materialsEntityLog.getEntityType())){
+                return false;
+            }
+        }
+        materialsEntityLog.getJob().getMonster().add(materialsEntityLog);
+        db.insertEntitiesLog(materialsEntityLog);
+        return true;
+    }
+
+    public ArrayList<MaterialsLog> getMatList(Job job){
+        for (Map.Entry<Job, ArrayList<MaterialsLog>> entry : this.materialsMap.entrySet()){
+            if (job.equals(entry.getKey())){
+                return entry.getValue();
+            }
+        }
+        return new ArrayList<>();
+    }
+
+    public ArrayList<MaterialsEntityLog> getEntityList(Job job){
+        for (Map.Entry<Job, ArrayList<MaterialsEntityLog>> entry : this.materialsEntityMap.entrySet()){
+            if (job.equals(entry.getKey())){
+                return entry.getValue();
+            }
+        }
+        return new ArrayList<>();
     }
 
 }

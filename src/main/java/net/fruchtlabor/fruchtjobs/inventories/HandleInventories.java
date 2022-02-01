@@ -4,7 +4,6 @@ import net.fruchtlabor.fruchtjobs.Jobs;
 import net.fruchtlabor.fruchtjobs.abstracts.Job;
 import net.fruchtlabor.fruchtjobs.jobRelated.JobPlayer;
 import net.fruchtlabor.fruchtjobs.perks.Perk;
-import net.milkbowl.vault.chat.Chat;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -14,9 +13,28 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 public class HandleInventories implements Listener {
+
+    ArrayList<Player> playerTimeouts = new ArrayList<>();
+
+    public HandleInventories() {
+        clearTimerList();
+    }
+
+    public boolean isTimerPlayer(Player player){
+        return playerTimeouts.contains(player);
+    }
+
+    public void clearTimerList(){
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(Jobs.plugin, new Runnable() {
+            @Override
+            public void run() {
+                playerTimeouts.clear();
+            }
+        },200L, 200L);
+    }
+
     @EventHandler
     public void onDrag(InventoryClickEvent event){
         String title = event.getView().getTitle();
@@ -42,10 +60,18 @@ public class HandleInventories implements Listener {
                         event.setCancelled(true);
                         break;
                     case "BossBar":
+                        if (isTimerPlayer(player)){
+                            event.setCancelled(true);
+                            return;
+                        }
                         if (player.hasPermission(Jobs.plugin.getConfig().getString("Permissions.noBossBar"))){
                             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "lp user "+player.getName()+" permission unset "+Jobs.plugin.getConfig().getString("Permissions.noBossBar"));
+                            player.sendMessage(ChatColor.RED+"[-]"+ChatColor.WHITE+" BossBar");
+                            playerTimeouts.add(player);
                         }else{
                             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "lp user "+player.getName()+" permission set "+Jobs.plugin.getConfig().getString("Permissions.noBossBar"));
+                            player.sendMessage(ChatColor.GREEN+"[+]"+ChatColor.WHITE+" BossBar");
+                            playerTimeouts.add(player);
                         }
                         event.setCancelled(true);
                         break;
@@ -153,7 +179,11 @@ public class HandleInventories implements Listener {
                 }
                 else if (name.equalsIgnoreCase("Perks")){
                     JobPlayer jobPlayer = Jobs.DATABASEMANAGER.getByUUID(player.getUniqueId(), job.getName());
-                    player.openInventory(jobInventory.getPerkInventory(jobPlayer, job));
+                    if (jobPlayer != null){
+                        player.openInventory(jobInventory.getPerkInventory(jobPlayer, job));
+                    }else{
+                        event.setCancelled(true);
+                    }
                 }
                 else if (name.equalsIgnoreCase("zurück")){
                     jobInventory.getJobsPanel(player);

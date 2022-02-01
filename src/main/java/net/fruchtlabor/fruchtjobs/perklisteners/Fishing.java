@@ -57,12 +57,10 @@ public class Fishing implements Listener {
                                     }
                                 }
                                 if (!hasPerk){
-                                    System.out.println(item.getName());
                                     CodedItems codedItems = new CodedItems();
                                     item.setItemStack(codedItems.getFish(1,10));
                                 }
                             }else{
-                                System.out.println(item.getName());
                                 CodedItems codedItems = new CodedItems();
                                 item.setItemStack(codedItems.getFish(1,10));
                             }

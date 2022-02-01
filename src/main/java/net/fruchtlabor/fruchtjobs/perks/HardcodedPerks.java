@@ -76,20 +76,19 @@ public class HardcodedPerks {
                 break;
             case "Schatzsucher":
                 perks.add(new Perk("perks.Schatzsucher.01", "Verborgene Schätze I", 10, "Beim Abbau kann ein Schatz erscheinen!", Material.CHEST, "Schatzsucher"));
-                perks.add(new Perk("perks.Schatzsucher.02", "Verborgene Schätze II", 20, "Andere Items (zusätzlich oder seperat)", Material.GOLDEN_SHOVEL, "Schatzsucher"));
+                perks.add(new Perk("perks.Schatzsucher.02", "Verborgene Schätze II", 20, "Andere Items (zusätzlich oder seperat)", Material.TRAPPED_CHEST, "Schatzsucher"));
                 perks.add(new Perk("perks.Schatzsucher.03", "Verborgene Schätze III", 30, "Andere Items (zusätzlich oder seperat)", Material.GOLDEN_SHOVEL, "Schatzsucher"));
-                perks.add(new Perk("perks.Schatzsucher.04", "Erfahrungssucher", 7, "Beim Abbau dropped manchmal Erfahrung!", Material.GOLDEN_SHOVEL, "Schatzsucher"));
-                perks.add(new Perk("perks.Schatzsucher.05", "Glasmacher", 12, "Statt Sand wird Glas gedropped!", Material.GOLDEN_SHOVEL, "Schatzsucher"));
+                perks.add(new Perk("perks.Schatzsucher.04", "Erfahrungssucher", 7, "Beim Abbau dropped manchmal Erfahrung!", Material.EXPERIENCE_BOTTLE, "Schatzsucher"));
+                perks.add(new Perk("perks.Schatzsucher.05", "Glasmacher", 12, "Statt Sand wird Glas gedropped!", Material.GLASS, "Schatzsucher"));
                 perks.add(new Perk("perks.Schatzsucher.06", "Steinbäcker", 15, "Clay wird direkt zu Ziegeln!", Material.BRICKS, "Schatzsucher"));
-                perks.add(new Perk("perks.Schatzsucher.07", "Schatzdetektor", 10, "Chance erhöht (mind. Verbordene Schätze I-III)", Material.GOLDEN_SHOVEL, "Schatzsucher"));
                 break;
             case "Verzauberer":
-                perks.add(new Perk("perks.Verzauberer.01", "Erfahrung", 15, "EXP werden manchmal nicht verbraucht!", Material.ENCHANTED_BOOK, "Verzauberer"));
+                perks.add(new Perk("perks.Verzauberer.01", "Erfahrener Zauberer", 15, "EXP werden manchmal nicht verbraucht!", Material.ENCHANTED_BOOK, "Verzauberer"));
                 perks.add(new Perk("perks.Verzauberer.02", "Doppeldrop verzaubern", 30, "Sehr kleine Chance Buch zu duplizieren!", Material.HOPPER, "Verzauberer"));
                 perks.add(new Perk("perks.Verzauberer.03", "Rezept: Flugtrank I", 10, "Trank zum Fliegen 5m", Material.GLASS_BOTTLE, "Verzauberer"));
                 perks.add(new Perk("perks.Verzauberer.04", "Rezept: Flugtrank II", 40, "Trank zum Fliegen 10m", Material.HONEY_BOTTLE, "Verzauberer"));
                 perks.add(new Perk("perks.Verzauberer.05", "Glück des Verzauberns", 35, "Kann manchmal die Verzauberung erhöhen!", Material.ENCHANTING_TABLE, "Verzauberer"));
-                perks.add(new Perk("perks.Verzauberer.06", "Entzaubern", 50, "Kann mit gewisser Chance entzaubern!", Material.ANVIL, "Verzauberer"));
+                perks.add(new Perk("perks.Verzauberer.06", "Entzaubern", 50, "Kann mit gewisser Chance (Tools) entzaubern!", Material.ANVIL, "Verzauberer"));
                 break;
         }
         return perks;

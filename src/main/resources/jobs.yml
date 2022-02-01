@@ -1,0 +1,49 @@
+Jobs:
+  Job1:
+    name: "Minenarbeiter"
+    stuff:
+      1:
+        material: STONE
+        exp: 0.01
+        at_level: 1
+        doing: break
+  Job2:
+    name: "Farmer"
+    stuff:
+      1:
+        material: STONE
+        exp: 0.01
+        at_level: 1
+        doing: break
+  Job3:
+    name: "Fischer"
+    stuff:
+      1:
+        material: STONE
+        exp: 0.01
+        at_level: 1
+        doing: fish
+  Job4:
+    name: "Foerster"
+    stuff:
+      1:
+        material: STONE
+        exp: 0.01
+        at_level: 1
+        doing: break
+  Job5:
+    name: "Schatzsucher"
+    stuff:
+      1:
+        material: STONE
+        exp: 0.01
+        at_level: 1
+        doing: break
+  Job6:
+    name: "Verzauberer"
+    stuff:
+      1:
+        material: STONE
+        exp: 0.01
+        at_level: 1
+        doing: break

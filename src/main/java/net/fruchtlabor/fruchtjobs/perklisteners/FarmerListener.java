@@ -3,9 +3,8 @@ package net.fruchtlabor.fruchtjobs.perklisteners;
 import net.fruchtlabor.fruchtjobs.Jobs;
 import net.fruchtlabor.fruchtjobs.abstracts.Job;
 import net.fruchtlabor.fruchtjobs.codedJobs.Farmer;
-import net.fruchtlabor.fruchtjobs.jobRelated.FruchtMaterial;
 import net.fruchtlabor.fruchtjobs.jobRelated.JobPlayer;
-import net.fruchtlabor.fruchtjobs.perks.HardcodedPerks;
+import net.fruchtlabor.fruchtjobs.logs.MaterialsLog;
 import net.fruchtlabor.fruchtjobs.perks.Perk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -147,8 +146,8 @@ public class FarmerListener implements Listener {
     }
 
     public boolean cropStuff(Material material, Job job){
-        for (FruchtMaterial mat : job.getItems()){
-            if (mat.material == material)
+        for (MaterialsLog mat : job.getItems()){
+            if (mat.getMaterial() == material)
                 return true;
         }
         return false;

@@ -14,6 +14,8 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.ExperienceOrb;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
@@ -53,6 +55,8 @@ public class Destroy implements Listener {
 
         if (Jobs.DATABASEMANAGER.isLogged(block.getLocation())){
             return;
+        }else{
+            Jobs.DATABASEMANAGER.addLogEntry(new SimpleLocation(block.getLocation().getX(), block.getLocation().getY(), block.getLocation().getZ(), block.getWorld().getName(), player.getUniqueId(), block.getType().name(), block.getLocation().toString(), Jobs.getTimeStamp()));
         }
 
         for (Map.Entry<Job, ArrayList<Perk>> entry : Jobs.hardcoded.perkMap.entrySet()){
@@ -87,11 +91,9 @@ public class Destroy implements Listener {
                     continue;
                 }
                 //adding exp of the block if exp is present
-                if(exp > 0.0){
+                if(exp > 0){
 
                     jobPlayer.addExp(exp);
-
-                    Jobs.DATABASEMANAGER.addLogEntry(new SimpleLocation(block.getLocation().getX(), block.getLocation().getY(), block.getLocation().getZ(), block.getWorld().getName(), player.getUniqueId(), block.getType().name(), block.getLocation().toString(), Jobs.getTimeStamp()));
 
                     for (Perk perk : entry.getValue()){
                         if (player.hasPermission(perk.getPermission())){
@@ -227,24 +229,51 @@ public class Destroy implements Listener {
                                     if (specifyChance(200, 1)){
                                         location.getBlock().setType(Material.CHEST);
                                         Chest chest = (Chest) location.getBlock().getState();
-
+                                        CodedItems codedItems = new CodedItems();
+                                        for (ItemStack itemStack : codedItems.getChest(1)){
+                                            chest.getBlockInventory().addItem(itemStack);
+                                        }
+                                        event.setCancelled(true);
+                                        break;
                                     }
                                 }else if(perk.getName().equalsIgnoreCase("Verborgene Schätze II")){
                                     if (specifyChance(300, 1)){
-
+                                        location.getBlock().setType(Material.CHEST);
+                                        Chest chest = (Chest) location.getBlock().getState();
+                                        CodedItems codedItems = new CodedItems();
+                                        for (ItemStack itemStack : codedItems.getChest(2)){
+                                            chest.getBlockInventory().addItem(itemStack);
+                                        }
+                                        event.setCancelled(true);
+                                        break;
                                     }
                                 }else if(perk.getName().equalsIgnoreCase("Verborgene Schätze III")){
                                     if (specifyChance(400, 1)){
-
+                                        location.getBlock().setType(Material.CHEST);
+                                        Chest chest = (Chest) location.getBlock().getState();
+                                        CodedItems codedItems = new CodedItems();
+                                        for (ItemStack itemStack : codedItems.getChest(3)){
+                                            chest.getBlockInventory().addItem(itemStack);
+                                        }
+                                        event.setCancelled(true);
+                                        break;
                                     }
                                 }else if(perk.getName().equalsIgnoreCase("Erfahrungssucher")){
-
+                                    if (chanceToHundred(5)){
+                                        location.getWorld().spawn(player.getLocation(), ExperienceOrb.class).setExperience(new Random().nextInt(10));
+                                    }
                                 }else if(perk.getName().equalsIgnoreCase("Glasmacher")){
-
+                                    if (block.getType().equals(Material.SAND) || block.getType().equals(Material.RED_SAND)){
+                                        event.setCancelled(true);
+                                        block.setType(Material.AIR);
+                                        location.getWorld().dropItemNaturally(location, new ItemStack(Material.GLASS));
+                                    }
                                 }else if(perk.getName().equalsIgnoreCase("Steinbäcker")){
-
-                                }else if(perk.getName().equalsIgnoreCase("Schatzdetektor")){
-
+                                    for (ItemStack item : block.getDrops()){
+                                        location.getWorld().dropItemNaturally(location, new ItemStack(Material.BRICK, item.getAmount()));
+                                    }
+                                    event.setCancelled(true);
+                                    block.setType(Material.AIR);
                                 }
                             }
                         }

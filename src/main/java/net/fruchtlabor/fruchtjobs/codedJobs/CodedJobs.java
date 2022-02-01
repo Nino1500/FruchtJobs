@@ -12,7 +12,6 @@ public class CodedJobs {
         jobs.add(JobFactory.getJob("Farmer"));
         jobs.add(JobFactory.getJob("Fischer"));
         jobs.add(JobFactory.getJob("Foerster"));
-        //jobs.add(JobFactory.getJob("Jaeger"));
         jobs.add(JobFactory.getJob("Miner"));
         jobs.add(JobFactory.getJob("Schatzsucher"));
         jobs.add(JobFactory.getJob("Verzauberer"));

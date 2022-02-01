@@ -11,7 +11,9 @@ import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import me.arcaniax.hdb.enums.CategoryEnum;
 import me.arcaniax.hdb.object.head.Head;
 import net.fruchtlabor.fruchtjobs.codedJobs.CodedJobs;
+import net.fruchtlabor.fruchtjobs.commands.Entzaubern;
 import net.fruchtlabor.fruchtjobs.commands.JobCommand;
+import net.fruchtlabor.fruchtjobs.commands.Jobedit;
 import net.fruchtlabor.fruchtjobs.database.Database;
 import net.fruchtlabor.fruchtjobs.abstracts.Job;
 import net.fruchtlabor.fruchtjobs.database.DatabaseManager;
@@ -40,7 +42,6 @@ import java.util.List;
 import java.util.Random;
 
 public class Jobs extends JavaPlugin {
-
     public static List<Job> jobs = new ArrayList<>();
     public static Plugin plugin;
     public static DatabaseManager DATABASEMANAGER;
@@ -73,11 +74,21 @@ public class Jobs extends JavaPlugin {
         }
 
         database.createLogTable();
+        database.createMaterialsTable();
+        database.createMaterialsEntityTable();
 
         DATABASEMANAGER = new DatabaseManager(this);
 
+        reloadJobs();
+
+        initGrasBlock();
+        initFarmLand();
+
+        hardcoded = new HardcodedPerks();
+
         Bukkit.getPluginManager().registerEvents(new Destroy(plugin), plugin);
-        Bukkit.getPluginManager().registerEvents(new HandleInventories(), plugin);
+        HandleInventories handleInventories = new HandleInventories();
+        Bukkit.getPluginManager().registerEvents(handleInventories, plugin);
         Bukkit.getPluginManager().registerEvents(new Fishing(), plugin);
         Bukkit.getPluginManager().registerEvents(new Killing(), plugin);
         Bukkit.getPluginManager().registerEvents(new FarmerListener(), plugin);
@@ -86,11 +97,11 @@ public class Jobs extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new Move(), plugin);
 
         this.getCommand("jobs").setExecutor(new JobCommand());
+        this.getCommand("job").setExecutor(new JobCommand());
+        this.getCommand("entzaubern").setExecutor(new Entzaubern());
+        this.getCommand("jobedit").setExecutor(new Jobedit());
 
-        initGrasBlock();
-        initFarmLand();
 
-        hardcoded = new HardcodedPerks();
     }
 
     public static boolean canBuild(Player p, Location l) {
@@ -98,6 +109,14 @@ public class Jobs extends JavaPlugin {
         RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
         RegionQuery query = container.createQuery();
         return query.testState(BukkitAdapter.adapt(l), localPlayer, Flags.BUILD);
+    }
+
+    public static void reloadJobs(){
+        Jobs.DATABASEMANAGER.fillMatLog();
+        for (Job job : jobs) {
+            job.setItems(DATABASEMANAGER.getMatList(job));
+            job.setMonster(DATABASEMANAGER.getEntityList(job));
+        }
     }
 
     public void initGrasBlock(){
@@ -141,7 +160,6 @@ public class Jobs extends JavaPlugin {
             }
         }
     }
-    // hehe
     public static Head getHead(EntityType mob){
         HeadDatabaseAPI api = new HeadDatabaseAPI();
         List<Head> animals = api.getHeads(CategoryEnum.ANIMALS);

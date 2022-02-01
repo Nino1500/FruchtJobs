@@ -3,11 +3,9 @@ package net.fruchtlabor.fruchtjobs.perklisteners;
 import net.fruchtlabor.fruchtjobs.Jobs;
 import net.fruchtlabor.fruchtjobs.abstracts.Job;
 import net.fruchtlabor.fruchtjobs.codedJobs.Foerster;
-import net.fruchtlabor.fruchtjobs.jobRelated.FruchtMonster;
 import net.fruchtlabor.fruchtjobs.jobRelated.JobPlayer;
-import net.fruchtlabor.fruchtjobs.perks.HardcodedPerks;
+import net.fruchtlabor.fruchtjobs.logs.MaterialsEntityLog;
 import net.fruchtlabor.fruchtjobs.perks.Perk;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -102,8 +100,8 @@ public class Killing implements Listener {
                 JobPlayer jobPlayer = Jobs.DATABASEMANAGER.getByUUID(player.getUniqueId(), job.getName());
                 if (jobPlayer != null){
                     if (/*job instanceof Jaeger ||*/ job instanceof Foerster){
-                        for (FruchtMonster monster : job.getMonster()){
-                            if (monster.entity.equals(event.getEntity().getType())){
+                        for (MaterialsEntityLog monster : job.getMonster()){
+                            if (monster.getEntityType().equals(event.getEntity().getType())){
                                 if (event.getDamager() instanceof Player){
                                     if (map.containsKey(event.getEntity().getEntityId())){
                                         map.put(event.getEntity().getEntityId(), map.get(event.getEntity().getEntityId())+event.getDamage());

@@ -2,10 +2,9 @@ package net.fruchtlabor.fruchtjobs.inventories;
 
 import net.fruchtlabor.fruchtjobs.Jobs;
 import net.fruchtlabor.fruchtjobs.abstracts.Job;
-import net.fruchtlabor.fruchtjobs.jobRelated.FruchtMaterial;
-import net.fruchtlabor.fruchtjobs.jobRelated.FruchtMonster;
 import net.fruchtlabor.fruchtjobs.jobRelated.JobPlayer;
-import net.fruchtlabor.fruchtjobs.perks.HardcodedPerks;
+import net.fruchtlabor.fruchtjobs.logs.MaterialsEntityLog;
+import net.fruchtlabor.fruchtjobs.logs.MaterialsLog;
 import net.fruchtlabor.fruchtjobs.perks.Perk;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -71,15 +70,15 @@ public class JobInventory {
     public Inventory getItemsInv(Job job){
         if (job.getName().equalsIgnoreCase("Verzauberer")){
             Inventory inventory = onlyTopAndBottom(Bukkit.createInventory(null, 54, job.getName() + " - Items"));
-            for (FruchtMaterial material : job.getItems()){
-                inventory.addItem(createItem(material.material.name(), "Enchantment: "+material.getEnchantment().getKey().toString().split(":")[1]+" - Exp: "+material.exp+" - Ab level: "+material.atLvl, material.material));
+            for (MaterialsLog material : job.getItems()){
+                inventory.addItem(createItem(material.getMaterial().name(), "Enchantment: "+material.getEnchantment().getKey().toString().split(":")[1]+" - Exp: "+material.getExperience()+" - Ab level: "+material.getAtLevel(), material.getMaterial()));
             }
             inventory.setItem(45, createItem("zurück", "<- Job", Material.BARRIER));
             return inventory;
         }else{
             Inventory inventory = circle(Bukkit.createInventory(null, 54, job.getName() + " - Items"));
-            for (FruchtMaterial material : job.getItems()){
-                inventory.addItem(createItem(material.material.name(), "Exp: "+material.exp+" - Ab level: "+material.atLvl, material.material));
+            for (MaterialsLog material : job.getItems()){
+                inventory.addItem(createItem(material.getMaterial().name(), "Exp: "+material.getExperience()+" - Ab level: "+material.getAtLevel(), material.getMaterial()));
             }
             inventory.setItem(45, createItem("zurück", "<- Job", Material.BARRIER));
             return inventory;
@@ -88,13 +87,13 @@ public class JobInventory {
 
     public Inventory getMonsterInv(Job job){
         Inventory inventory = circle(Bukkit.createInventory(null, 54, job.getName() + " - Monster"));
-        for (FruchtMonster monster : job.getMonster()){
-            ItemStack itemStack = Jobs.getHead(monster.entity).getHead();
+        for (MaterialsEntityLog monster : job.getMonster()){
+            ItemStack itemStack = Jobs.getHead(monster.getEntityType()).getHead();
             ItemMeta meta = itemStack.getItemMeta();
-            meta.setDisplayName(monster.entity.name());
+            meta.setDisplayName(monster.getEntityType().name());
             ArrayList<String> lore = new ArrayList<>();
-            lore.add("Exp: "+monster.exp);
-            lore.add("Ab level: "+monster.atLvl);
+            lore.add("Exp: "+monster.getExperience());
+            lore.add("Ab level: "+monster.getAtLvl());
             meta.setLore(lore);
             itemStack.setItemMeta(meta);
             inventory.addItem(itemStack);

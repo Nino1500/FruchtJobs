@@ -204,28 +204,120 @@ public class CodedItems {
     public boolean isCrop(BlockData blockData){
         return blockData instanceof Ageable;
     }
+
     public boolean isLog(Material material){
-        //TODO AAAA
-        return true;
+        return material.equals(Material.ACACIA_LOG)
+                || (material.equals(Material.BIRCH_LOG))
+                || (material.equals(Material.OAK_LOG))
+                || (material.equals(Material.DARK_OAK_LOG))
+                || (material.equals(Material.JUNGLE_LOG))
+                || (material.equals(Material.SPRUCE_LOG));
     }
+
     public ArrayList<ItemStack> getChest(int number){
         ArrayList<ItemStack> itemStacks = new ArrayList<>();
-        if (number == 1){
-            itemStacks.add(new ItemStack(Material.GOLD_NUGGET, 1));
-            itemStacks.add(new ItemStack(Material.GOLD_NUGGET, 2));
-            itemStacks.add(new ItemStack(Material.GOLD_NUGGET, 3));
-            itemStacks.add(new ItemStack(Material.IRON_NUGGET, 7));
-            itemStacks.add(new ItemStack(Material.IRON_NUGGET, 4));
-            itemStacks.add(new ItemStack(Material.IRON_NUGGET, 3));
-
-        }
-        if (number == 2){
-
-        }
-        if (number == 3){
-
+        for (int i = 0; i < new Random().nextInt(10-3)+3; i++) {
+            itemStacks.add(getRandomItem(number));
         }
         return itemStacks;
+    }
+
+    private ItemStack getRandomItem(int rarity){
+        ArrayList<Material> materials = new ArrayList<>();
+        if (rarity == 1){
+            materials.add(Material.STICK);
+            materials.add(Material.IRON_ORE);
+            materials.add(Material.GOLD_NUGGET);
+            materials.add(Material.IRON_NUGGET);
+            materials.add(Material.GOLD_INGOT);
+            materials.add(Material.IRON_INGOT);
+            materials.add(Material.COPPER_INGOT);
+            materials.add(Material.RAW_COPPER);
+            materials.add(Material.SLIME_BALL);
+            materials.add(Material.BROWN_MUSHROOM);
+            materials.add(Material.BOWL);
+            materials.add(Material.APPLE);
+            materials.add(Material.CARROT);
+            materials.add(Material.POTATO);
+            materials.add(Material.REDSTONE);
+            materials.add(Material.TALL_GRASS);
+            materials.add(Material.BREAD);
+            materials.add(Material.DIRT);
+            materials.add(Material.DIRT);
+        }
+        else if (rarity == 2){
+            materials.add(Material.DIAMOND);
+            materials.add(Material.DIAMOND);
+            materials.add(Material.GOLD_INGOT);
+            materials.add(Material.GOLD_INGOT);
+            materials.add(Material.DIRT);
+            materials.add(Material.GRASS_BLOCK);
+            materials.add(Material.TALL_GRASS);
+            materials.add(Material.EMERALD);
+            materials.add(Material.REDSTONE);
+            materials.add(Material.DIAMOND);
+            materials.add(Material.STICK);
+            materials.add(Material.STICK);
+            materials.add(Material.IRON_ORE);
+            materials.add(Material.GOLD_NUGGET);
+            materials.add(Material.IRON_NUGGET);
+            materials.add(Material.GOLD_INGOT);
+            materials.add(Material.IRON_INGOT);
+            materials.add(Material.COPPER_INGOT);
+            materials.add(Material.RAW_COPPER);
+            materials.add(Material.SLIME_BALL);
+            materials.add(Material.BROWN_MUSHROOM);
+            materials.add(Material.BOWL);
+            materials.add(Material.APPLE);
+            materials.add(Material.CARROT);
+            materials.add(Material.POTATO);
+            materials.add(Material.REDSTONE);
+            materials.add(Material.TALL_GRASS);
+            materials.add(Material.BREAD);
+            materials.add(Material.DIRT);
+            materials.add(Material.DIRT);
+        }
+        else if (rarity == 3){
+            materials.add(Material.DIAMOND);
+            materials.add(Material.DIAMOND);
+            materials.add(Material.GOLD_INGOT);
+            materials.add(Material.GOLD_INGOT);
+            materials.add(Material.DIRT);
+            materials.add(Material.GRASS_BLOCK);
+            materials.add(Material.TALL_GRASS);
+            materials.add(Material.EMERALD);
+            materials.add(Material.REDSTONE);
+            materials.add(Material.DIAMOND);
+            materials.add(Material.STICK);
+            materials.add(Material.STICK);
+            materials.add(Material.IRON_ORE);
+            materials.add(Material.GOLD_NUGGET);
+            materials.add(Material.IRON_NUGGET);
+            materials.add(Material.GOLD_INGOT);
+            materials.add(Material.IRON_INGOT);
+            materials.add(Material.COPPER_INGOT);
+            materials.add(Material.RAW_COPPER);
+            materials.add(Material.SLIME_BALL);
+            materials.add(Material.BROWN_MUSHROOM);
+            materials.add(Material.BOWL);
+            materials.add(Material.APPLE);
+            materials.add(Material.CARROT);
+            materials.add(Material.POTATO);
+            materials.add(Material.REDSTONE);
+            materials.add(Material.TALL_GRASS);
+            materials.add(Material.BREAD);
+            materials.add(Material.DIRT);
+            materials.add(Material.DIRT);
+            materials.add(Material.NETHERITE_INGOT);
+            materials.add(Material.NETHERITE_INGOT);
+            materials.add(Material.GOLDEN_APPLE);
+            materials.add(Material.GOLDEN_CARROT);
+            materials.add(Material.DIAMOND);
+            materials.add(Material.DIAMOND);
+        }else{
+            materials.add(Material.DIRT);
+        }
+        return new ItemStack(materials.get(new Random().nextInt(materials.size())), new Random().nextInt(3-1)+1);
     }
 
 

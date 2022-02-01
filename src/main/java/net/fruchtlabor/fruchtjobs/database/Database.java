@@ -1,9 +1,14 @@
 package net.fruchtlabor.fruchtjobs.database;
 
+import net.fruchtlabor.fruchtjobs.abstracts.Job;
 import net.fruchtlabor.fruchtjobs.jobRelated.JobPlayer;
+import net.fruchtlabor.fruchtjobs.logs.MaterialType;
+import net.fruchtlabor.fruchtjobs.logs.MaterialsEntityLog;
+import net.fruchtlabor.fruchtjobs.logs.MaterialsLog;
 import net.fruchtlabor.fruchtjobs.logs.SimpleLocation;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
+import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.EntityType;
 import org.bukkit.plugin.Plugin;
 
 import java.sql.*;
@@ -23,7 +28,7 @@ public class Database {
         Connection connection = null;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:"+plugin.getConfig().getInt("MySQL.port")+"/"+plugin.getConfig().getString("MySQL.name"), plugin.getConfig().getString("MySQL.user"), plugin.getConfig().getString("MySQL.password"));
+            connection = DriverManager.getConnection("jdbc:mysql://"+plugin.getConfig().getString("MySQL.host")+":"+plugin.getConfig().getInt("MySQL.port")+"/"+plugin.getConfig().getString("MySQL.name"), plugin.getConfig().getString("MySQL.user"), plugin.getConfig().getString("MySQL.password"));
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -70,6 +75,32 @@ public class Database {
             stmt.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+        }
+    }
+
+    public void createMaterialsTable(){
+        String sql = "CREATE TABLE IF NOT EXISTS materials (material VARCHAR(64) PRIMARY KEY,experience DOUBLE,job VARCHAR(32),type ENUM('BREAK','FISH','KILL'),atlvl integer,enchantment VARCHAR(32),enchantment_lvl integer)";
+        try {
+            Connection conn = connect();
+            Statement stmt = conn.createStatement();
+            stmt.execute(sql);
+            conn.close();
+            stmt.close();
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void createMaterialsEntityTable(){
+        String sql = "CREATE TABLE IF NOT EXISTS entities (entity VARCHAR(64) PRIMARY KEY,experience DOUBLE,job VARCHAR(32),type ENUM('KILL'),atlvl integer)";
+        try {
+            Connection conn = connect();
+            Statement stmt = conn.createStatement();
+            stmt.execute(sql);
+            conn.close();
+            stmt.close();
+        }catch (SQLException e){
+            e.printStackTrace();
         }
     }
 
@@ -203,5 +234,181 @@ public class Database {
         }
         return null;
     }
+    public ArrayList<MaterialsLog> getMaterialLogByJob(Job job) {
+        String sql = "SELECT * FROM materials WHERE job = ?";
+        ArrayList<MaterialsLog> list = new ArrayList<>();
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        try {
+            connection = connect();
+            statement = connection.prepareStatement(sql);
+            statement.setString(1, job.getName());
+            rs = statement.executeQuery();
+            while (rs.next()) {
+                Material material = Material.matchMaterial(rs.getString("material"));
+                double exp = rs.getDouble("experience");
+                MaterialType materialType = MaterialType.valueOf(rs.getString("type"));
+                int atlvl = rs.getInt("atlvl");
+                Enchantment enchantment = Enchantment.getByName(rs.getString("enchantment"));
+                int ench_lvl = rs.getInt("enchantment_lvl");
+                if (enchantment == null){
+                    list.add(new MaterialsLog(material, job, exp, materialType, atlvl));
+                }else{
+                    list.add(new MaterialsLog(material, job, exp, materialType, atlvl, enchantment, ench_lvl));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (statement != null) {
+                    statement.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return list;
+    }
 
+    public ArrayList<MaterialsEntityLog> getEntityLogByJob(Job job){
+        String sql = "SELECT * FROM entities WHERE job = ?";
+        ArrayList<MaterialsEntityLog> list = new ArrayList<>();
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        try {
+            connection = connect();
+            statement = connection.prepareStatement(sql);
+            statement.setString(1, job.getName());
+            rs = statement.executeQuery();
+            while (rs.next()){
+                EntityType entityType = EntityType.valueOf(rs.getString("entity"));
+                double exp = rs.getDouble("experience");
+                MaterialType type = MaterialType.valueOf(rs.getString("type"));
+                int atlvl = rs.getInt("atlvl");
+                list.add(new MaterialsEntityLog(entityType, job, exp, type, atlvl));
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (statement != null) {
+                    statement.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return list;
+    }
+
+    public void changeMaterialsLog(Material material, double exp){
+        String sql = "UPDATE materials SET experience = ? WHERE material = ?";
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            connection = connect();
+            statement = connection.prepareStatement(sql);
+            statement.setDouble(1,exp);
+            statement.setString(2,material.name());
+            statement.execute();
+        }catch (SQLException e){
+            e.printStackTrace();
+        }finally {
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void changeEntityLog(EntityType entityType, double exp){
+        String sql = "UPDATE entities SET experience = ? WHERE entity = ?";
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            connection = connect();
+            statement = connection.prepareStatement(sql);
+            statement.setDouble(1,exp);
+            statement.setString(2,entityType.name());
+            statement.execute();
+        }catch (SQLException e){
+            e.printStackTrace();
+        }finally {
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+//        String sql = "CREATE TABLE IF NOT EXISTS materials (material VARCHAR(64),experience DOUBLE,job VARCHAR(32),type ENUM('BREAK','FISH','KILL'),atlvl integer,enchantment VARCHAR(32),enchantment_lvl integer)";
+    public void insertMaterialsLog(MaterialsLog materialsLog){
+        String sql = "INSERT INTO materials (material, experience, job, type, atlvl, enchantment, enchantment_lvl) VALUES (?,?,?,?,?,?,?)";
+        try {
+            Connection connection = connect();
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            pstmt.setString(1, materialsLog.getMaterial().name());
+            pstmt.setDouble(2, materialsLog.getExperience());
+            pstmt.setString(3, materialsLog.getJob().getName());
+            pstmt.setString(4, materialsLog.getType().name());
+            pstmt.setInt(5, materialsLog.getAtLevel());
+            if (materialsLog.getEnchantment() == null){
+                pstmt.setString(6, "none");
+                pstmt.setInt(7, 0);
+            }else{
+                pstmt.setString(6, materialsLog.getEnchantment().getName());
+                pstmt.setInt(7, materialsLog.getEnchant_level());
+            }
+            pstmt.execute();
+            connection.close();
+            pstmt.close();
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void insertEntitiesLog(MaterialsEntityLog materialsEntityLog){
+        String sql = "INSERT INTO entities (entity, experience, job, type, atlvl) VALUES (?,?,?,?,?)";
+        try {
+            Connection connection = connect();
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            pstmt.setString(1, materialsEntityLog.getEntityType().name());
+            pstmt.setDouble(2, materialsEntityLog.getExperience());
+            pstmt.setString(3, materialsEntityLog.getJob().getName());
+            pstmt.setString(4, materialsEntityLog.getType().name());
+            pstmt.setInt(5, materialsEntityLog.getAtLvl());
+            pstmt.execute();
+            connection.close();
+            pstmt.close();
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
 }
